@@ -45,6 +45,7 @@ const filePaths = [
   "./documents/BundlingBusinessEmailTake2.docx",
   "./documents/AmazonResponses.docx",
   "./documents/CostcoNotes.docx",
+  "./documents/WalmartDSV.docx",
 ];
 
 const client = new DataAPIClient(ASTRA_DB_APPLICATION_TOKEN);

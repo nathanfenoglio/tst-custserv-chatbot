@@ -31,7 +31,9 @@ async function queryOllamaLLM(context: string, question: string) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "deepseek-r1",
+      // model: "deepseek-r1",
+      model: "llama3.2:3b", // faster maybe acceptably faster on 4.0 VRAM GPU
+      // model: "deepseek-r1:1.5b-qwen-distill-q8_0", // faster than deepseek-r1 but terrible answers
       prompt: `You are a helpful assistant that answers customer service questions from account documents. Answer based only on the provided context.
       - Answer **directly** and **do not include any reasoning or explanations**.  
       - Do **not** include "<think>" or any thoughts, just provide the **final answer only**.

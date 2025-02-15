@@ -4,7 +4,7 @@
 // maybe do some kind of image thing 
 // import { useChat } from "ai/react" 
 import { Message } from "ai"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 
 const Home = () => { 
   // useChat hook handles appending the user's question as well as the ai's response
@@ -17,6 +17,14 @@ const Home = () => {
   
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false);
+
+  const messagesEndingRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (messagesEndingRef.current) {
+      messagesEndingRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   // use openai append function to add user's question
   // const handlePrompt = (promptText: string) => {
@@ -115,7 +123,8 @@ const Home = () => {
           <h1 className='text-center w-[60%] mx-auto text-[#00FFFF]'>Oracle</h1>
         </div>
 
-        <div className='w-[100%] mx-auto'>
+        {/*<div className='w-[100%] mx-auto'> */}
+        <div className='w-[100%] mx-auto max-h-[70vh] overflow-y-auto'>
           {/* map user and ai messages onto their respective textbubbles */}
           {messages.map((message: Message, index: number) => (
             <div
@@ -123,7 +132,7 @@ const Home = () => {
               className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} mb-4`}
             >
               <div
-                className={`max-w-xs md:max-w-md p-4 rounded-lg text-white ${
+                className={`max-w-xs md:max-w-md p-4 m-6 rounded-lg text-white ${
                   message.role === "user"
                     ? "bg-blue-500 text-right"
                     : "bg-[#FF69B4] text-black"
@@ -133,6 +142,8 @@ const Home = () => {
               </div>
             </div>
           ))}
+
+          <div ref={messagesEndingRef} />
 
           {/* user question input box and submit button */}
           <form
