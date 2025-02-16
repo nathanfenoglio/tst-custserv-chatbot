@@ -6,7 +6,14 @@
 import { Message } from "ai"
 import { useState, useEffect, useRef } from "react"
 
+import { useAuth } from "../context/AuthContext";
+import { useRouter } from "next/navigation";
+
 const Home = () => { 
+  // user and logout functions defined in context/AuthContext, useAuth react hook to access firebase auth
+  const { user, logout } = useAuth();
+  const router = useRouter();
+
   // useChat hook handles appending the user's question as well as the ai's response
   // useChat hook handles sending messages to the API route chat/route.ts
   // the useChat hook is triggered when the append function is called
@@ -20,6 +27,14 @@ const Home = () => {
 
   const messagesEndingRef = useRef<HTMLDivElement | null>(null);
 
+  // if user doesn't exist from useAuth hook, redirect to login page
+  useEffect(() => {
+    if (!user) {
+      router.push("/Login");
+    }
+  }, [user, router]);
+  
+  // scroll to bottom of messages, messagesEndingRef is a ref to a dummy div after last message
   useEffect(() => {
     if (messagesEndingRef.current) {
       messagesEndingRef.current.scrollIntoView({ behavior: "smooth" });
@@ -37,8 +52,6 @@ const Home = () => {
   // }
 
   const handlePrompt = async (promptText: string) => {
-    console.log("📤 Sending user input:", promptText);
-
     if (loading) return; // Prevent multiple requests
 
     setLoading(true);
@@ -70,12 +83,11 @@ const Home = () => {
       // const aiResponse = await response.text();
 
       const rawText = await response.text(); // Read response as plain text
-      console.log("Raw DeepSeek Response:", rawText); // Debugging: Check response in console
 
       // it's cool that the think response is provided but for the answer that's displayed to the user, remove the thinking text
       // remove the `<think>...</think>` part and extract only the final answer
       const aiResponse = rawText.replace(/<think>[\s\S]*?<\/think>/, "").trim();
-      console.log("AI Response:", aiResponse); // Debugging: Check response in console
+      // console.log("AI Response:", aiResponse); // Debugging: Check response in console
 
       // NOT USING useChat hook BECAUSE WAS TRIGGERING MULTIPLE SENDS
       // Append AI response to messages
@@ -114,16 +126,17 @@ const Home = () => {
     }
   };
 
+  if (!user) return null;
+
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-gray-900 p-4">
       <main>
-        <div className='mt-[2vh] mb-[3vh] text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold'>
+        <div className='mt-[6vh] mb-[3vh] text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold'>
           <h1 className='text-center w-[60%] mx-auto text-[#00FFFF]'>Consult the</h1>
           <h1 className='text-center w-[100%] mx-auto text-[#00FFFF]'>TST Customer Service</h1>
           <h1 className='text-center w-[60%] mx-auto text-[#00FFFF]'>Oracle</h1>
         </div>
 
-        {/*<div className='w-[100%] mx-auto'> */}
         <div className='w-[100%] mx-auto max-h-[70vh] overflow-y-auto'>
           {/* map user and ai messages onto their respective textbubbles */}
           {messages.map((message: Message, index: number) => (
@@ -169,6 +182,10 @@ const Home = () => {
           </form>
 
         </div>
+
+        <button onClick={logout} className="bg-red-500 text-white px-4 py-2 rounded-lg mt-4">
+          Logout
+        </button>
         
       </main>
     </div>

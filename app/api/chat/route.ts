@@ -37,6 +37,7 @@ async function queryOllamaLLM(context: string, question: string) {
       prompt: `You are a helpful assistant that answers customer service questions from account documents. Answer based only on the provided context.
       - Answer **directly** and **do not include any reasoning or explanations**.  
       - Do **not** include "<think>" or any thoughts, just provide the **final answer only**.
+      - If the question is not related to account documents, answer "I don't know."
 
       ---- CONTEXT ----
       ${context || "No relevant documents found."}
@@ -91,7 +92,7 @@ export async function POST(req: Request) {
       docContext = "No relevant documents found.";
     }
 
-    // send context from astraDB + user question to deepseek-r1 model
+    // send context from astraDB + user question to ai model
     const answer = await queryOllamaLLM(docContext, latestMessage);
 
     // return response to frontend
