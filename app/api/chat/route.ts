@@ -1,9 +1,26 @@
 import { DataAPIClient } from "@datastax/astra-db-ts";
 
+import fs from "fs";
+import path from "path";
+
+const logFilePath = path.join(process.cwd(), "log.txt");
+
 // Initialize AstraDB
 const { ASTRA_DB_NAMESPACE, ASTRA_DB_COLLECTION, ASTRA_DB_API_ENDPOINT, ASTRA_DB_APPLICATION_TOKEN } = process.env;
 const client = new DataAPIClient(ASTRA_DB_APPLICATION_TOKEN);
 const db = client.db(ASTRA_DB_API_ENDPOINT!, { namespace: ASTRA_DB_NAMESPACE });
+
+// save all questions and answers to log file
+function appendToLog(message: string) {
+  const timestamp = new Date().toISOString();
+  const logEntry = `[${timestamp}] ${message}\n`;
+
+  fs.appendFile(logFilePath, logEntry, (err) => {
+    if (err) {
+      console.error("Error writing to log file:", err);
+    }
+  });
+}
 
 // get embedding from Ollama's nomic-embed-text embedding model
 async function getEmbedding(text: string) {
@@ -27,6 +44,10 @@ async function getEmbedding(text: string) {
 // Function to query Ollama's LLM for response
 // could add temperature: 0.2 to try to make it more factual and less creative 
 async function queryOllamaLLM(context: string, question: string) {
+  // log user question to log file
+  console.log(`USER QUESTION: ${question}`);
+  appendToLog(`USER QUESTION: ${question}`);
+  // console.log(`CONTEXT: ${context}`);
   const response = await fetch("http://localhost:11434/api/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -51,6 +72,9 @@ async function queryOllamaLLM(context: string, question: string) {
 
   const data = await response.json();
   console.log("Ollama Response:", data);
+  console.log(`OLLAMA RESPONSE: ${data.response}`);
+  // log ollama response to log file
+  appendToLog(`OLLAMA RESPONSE: ${data.response}`);
   
   return data.response || "I don't know.";
 }

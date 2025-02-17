@@ -42,3 +42,6 @@ next-env.d.ts
 
 # ignore documents folder of account documents to be downloaded locally
 /documents/*
+
+# ignore q/a log file
+log.txt

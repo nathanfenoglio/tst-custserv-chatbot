@@ -132,9 +132,9 @@ const Home = () => {
     <div className="flex flex-col items-center w-full min-h-screen bg-gray-900 p-4">
       <main>
         <div className='mt-[6vh] mb-[3vh] text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold'>
-          <h1 className='text-center w-[60%] mx-auto text-[#00FFFF]'>Consult the</h1>
+          {/* <h1 className='text-center w-[60%] mx-auto text-[#00FFFF]'>Consult the</h1> */}
           <h1 className='text-center w-[100%] mx-auto text-[#00FFFF]'>TST Customer Service</h1>
-          <h1 className='text-center w-[60%] mx-auto text-[#00FFFF]'>Oracle</h1>
+          <h1 className='text-center w-[60%] mx-auto text-[#00FFFF]'>Chat Bot</h1>
         </div>
 
         <div className='w-[100%] mx-auto max-h-[70vh] overflow-y-auto'>
