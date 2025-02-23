@@ -45,3 +45,6 @@ next-env.d.ts
 
 # ignore q/a log file
 log.txt
+
+# ignore email to db collection map
+/scripts/userEmailsCollections.ts

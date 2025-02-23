@@ -72,7 +72,8 @@ const Home = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ messages: [...messages, userMessage] }),
+        // body: JSON.stringify({ messages: [...messages, userMessage] }),
+        body: JSON.stringify({ email: user?.email, messages: [...messages, userMessage] }),
       });
   
       // const data = await response.json();

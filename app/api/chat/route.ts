@@ -3,6 +3,8 @@ import { DataAPIClient } from "@datastax/astra-db-ts";
 import fs from "fs";
 import path from "path";
 
+// map of user emails to collections in userEmailsCollections.ts
+import { userEmailsCollections } from "@/scripts/userEmailsCollections";
 const logFilePath = path.join(process.cwd(), "log.txt");
 
 // Initialize AstraDB
@@ -83,7 +85,9 @@ async function queryOllamaLLM(context: string, question: string) {
 export async function POST(req: Request) {
   console.log("📩 Received new POST request");
   try {
-    const { messages } = await req.json();
+    // const { messages } = await req.json();
+    const { email, messages } = await req.json();
+    console.log("email: ", email);
     // get embedding for only last message
     const latestMessage = messages[messages.length - 1]?.content || "";
 
@@ -95,7 +99,14 @@ export async function POST(req: Request) {
 
     try {
       // query AstraDB for top 10 most relevant documents
-      const collection = await db.collection(ASTRA_DB_COLLECTION!);
+      // const collection = await db.collection(ASTRA_DB_COLLECTION!);
+      // const collection = await db.collection("tstcustserv_2");
+      if (!userEmailsCollections.has(email)) {
+        throw new Error(`No collection found for email: ${email}`);
+      }
+      // const collection = await db.collection(ASTRA_DB_COLLECTION!);
+      const collection = await db.collection(userEmailsCollections.get(email)!);
+      
       const cursor = collection.find({ text: { $exists: true } }, {
         sort: { $vector: vector },
         limit: 10,

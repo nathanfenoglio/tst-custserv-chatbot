@@ -1,3 +1,4 @@
+// npm run seed
 import { DataAPIClient } from "@datastax/astra-db-ts";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 // import OpenAI from "openai";
@@ -10,6 +11,14 @@ type SimilarityMetric = "dot_product" | "cosine" | "euclidean";
 
 // const { ASTRA_DB_NAMESPACE, ASTRA_DB_COLLECTION, ASTRA_DB_API_ENDPOINT, ASTRA_DB_APPLICATION_TOKEN, OPENAI_API_KEY } = process.env;
 const { ASTRA_DB_NAMESPACE, ASTRA_DB_COLLECTION, ASTRA_DB_API_ENDPOINT, ASTRA_DB_APPLICATION_TOKEN } = process.env;
+
+// get astra db collection name from command line arg instead to differentiate which collection to use
+const collectionName: string = process.argv[2];
+
+if (!collectionName) {
+  console.error("Please provide a collection name as an argument.");
+  process.exit(1);
+}
 
 // Validate environment variables
 const validateEnvVariables = () => {
@@ -39,13 +48,16 @@ if (!validateEnvVariables()) {
 // const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
 const filePaths = [
-  "./documents/sams_virtual.docx",
-  "./documents/WalmartMoreThan98CartonsProcess.docx",
-  "./documents/PlantAddresses.docx",
-  "./documents/BundlingBusinessEmailTake2.docx",
-  "./documents/AmazonResponses.docx",
-  "./documents/CostcoNotes.docx",
-  "./documents/WalmartDSV.docx",
+  // "./documents/sams_virtual.docx",
+  // "./documents/WalmartMoreThan98CartonsProcess.docx",
+  // "./documents/PlantAddresses.docx",
+  // "./documents/BundlingBusinessEmailTake2.docx",
+  // "./documents/AmazonResponses.docx",
+  // "./documents/CostcoNotes.docx",
+  // "./documents/WalmartDSV.docx",
+  // "./documents/CustomerServiceOrderEntryProcess.docx",
+  // "./documents/ASNCreateAndSendProcess.docx",
+  "./documents/PAPERTRADENETWORK.docx",
 ];
 
 const client = new DataAPIClient(ASTRA_DB_APPLICATION_TOKEN);
@@ -69,22 +81,27 @@ const recreateCollection = async (similarityMetric: SimilarityMetric = "cosine")
   try {
     // drop the existing collection if it exists
     try {
-      await db.collection(ASTRA_DB_COLLECTION!).drop();
-      console.log(`Dropped collection: ${ASTRA_DB_COLLECTION}`);
+      // await db.collection(ASTRA_DB_COLLECTION!).drop();
+      await db.collection(collectionName!).drop();
+      // console.log(`Dropped collection: ${ASTRA_DB_COLLECTION}`);
+      console.log(`Dropped collection: ${collectionName}`);
     } catch (error) {
-      console.warn(`No existing collection to drop: ${ASTRA_DB_COLLECTION}, ${error}`);
+      // console.warn(`No existing collection to drop: ${ASTRA_DB_COLLECTION}, ${error}`);
+      console.warn(`No existing collection to drop: ${collectionName}, ${error}`);
     }
 
     // create the collection again or for the 1st time
     // using the similarity metric and 1536 dimensions -> changed to 768 dimensions now that using nomic-embed-text
-    const res = await db.createCollection(ASTRA_DB_COLLECTION!, {
+    // const res = await db.createCollection(ASTRA_DB_COLLECTION!, {
+    const res = await db.createCollection(collectionName!, {
       vector: {
         // dimension: 1536,
         dimension: 768,
         metric: similarityMetric,
       },
     });
-    console.log(`Created collection: ${ASTRA_DB_COLLECTION}`, res);
+    // console.log(`Created collection: ${ASTRA_DB_COLLECTION}`, res);
+    console.log(`Created collection: ${collectionName}`, res);
   } catch (error) {
     console.error(`Error recreating collection: ${error}`);
     throw error;
@@ -93,7 +110,8 @@ const recreateCollection = async (similarityMetric: SimilarityMetric = "cosine")
 
 const loadSampleData = async () => {
   // get reference to the collection you just created
-  const collection = await db.collection(ASTRA_DB_COLLECTION!);
+  // const collection = await db.collection(ASTRA_DB_COLLECTION!);
+  const collection = await db.collection(collectionName!);
 
   // get content for each file specified in file paths
   for (const filePath of filePaths) {
