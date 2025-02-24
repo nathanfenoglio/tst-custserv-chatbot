@@ -46,5 +46,6 @@ next-env.d.ts
 # ignore q/a log file
 log.txt
 
-# ignore email to db collection map
+# ignore email to db collection map and user specific file names
 /scripts/userEmailsCollections.ts
+/scripts/filePathsPerUserCollectionName.ts
