@@ -1,14 +1,16 @@
 import { DataAPIClient } from "@datastax/astra-db-ts";
-
 import fs from "fs";
 import path from "path";
 
 // map of user emails to collections in userEmailsCollections.ts
 import { userEmailsCollections } from "@/scripts/userEmailsCollections";
+
+// path to log file for logging user queries and chatbot responses 
+// process.cwd() returns the current working directory (where the project is running so all the way out to the root of the project)
+// path.join() appends the log.txt file to the current working directory path
 const logFilePath = path.join(process.cwd(), "log.txt");
 
-// Initialize AstraDB
-// const { ASTRA_DB_NAMESPACE, ASTRA_DB_COLLECTION, ASTRA_DB_API_ENDPOINT, ASTRA_DB_APPLICATION_TOKEN } = process.env;
+// Initialize AstraDB for storing vector embeddings from the chunks of documents
 const { ASTRA_DB_NAMESPACE, ASTRA_DB_API_ENDPOINT, ASTRA_DB_APPLICATION_TOKEN } = process.env;
 const client = new DataAPIClient(ASTRA_DB_APPLICATION_TOKEN);
 const db = client.db(ASTRA_DB_API_ENDPOINT!, { namespace: ASTRA_DB_NAMESPACE });
@@ -25,9 +27,11 @@ function appendToLog(message: string) {
   });
 }
 
-// get embedding from Ollama's nomic-embed-text embedding model
+// get embedding from Ollama's nomic-embed-text embedding model for user's question
+// astraDB collection is already seeded with backend file loadDb.ts
 async function getEmbedding(text: string) {
   // ollama pull nomic-embed-text
+  // by default ollama runs api server on port 11434
   const response = await fetch("http://localhost:11434/api/embeddings", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -50,7 +54,8 @@ async function queryOllamaLLM(context: string, question: string) {
   // log user question to log file
   console.log(`USER QUESTION: ${question}`);
   appendToLog(`USER QUESTION: ${question}`);
-  // console.log(`CONTEXT: ${context}`);
+
+  // create POST request to ollama api server including user's question and top 10 similar documents
   const response = await fetch("http://localhost:11434/api/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -82,12 +87,14 @@ async function queryOllamaLLM(context: string, question: string) {
   return data.response || "I don't know.";
 }
 
+// POST request is sent from Home/page.tsx
+// and contains user's email address and question
+// this function is automatically triggered when the POST request from Home/page.tsx is sent to this route api/chat
 export async function POST(req: Request) {
   console.log("📩 Received new POST request");
   try {
-    // const { messages } = await req.json();
+    // get user email to determine which collection they are allowed to query and messages array
     const { email, messages } = await req.json();
-    console.log("email: ", email);
     // get embedding for only last message
     const latestMessage = messages[messages.length - 1]?.content || "";
 
@@ -98,13 +105,13 @@ export async function POST(req: Request) {
     let docContext = "";  // variable for all the documents returned from AstraDB 
 
     try {
-      // query AstraDB for top 10 most relevant documents
       if (!userEmailsCollections.has(email)) { 
         throw new Error(`No collection found for email: ${email}`);
       }
       // get user's collection name from the email of the user logged in
       const collection = await db.collection(userEmailsCollections.get(email)!);
       
+      // query AstraDB for top 10 most relevant documents
       const cursor = collection.find({ text: { $exists: true } }, {
         sort: { $vector: vector },
         limit: 10,
@@ -126,9 +133,10 @@ export async function POST(req: Request) {
     }
 
     // send context from astraDB + user question to ai model
+    // could perhaps send some previous or all previous messages to the model to improve context...
     const answer = await queryOllamaLLM(docContext, latestMessage);
 
-    // return response to frontend
+    // return response to frontend Home/page.tsx
     return new Response(answer);
     
   } catch (error) {

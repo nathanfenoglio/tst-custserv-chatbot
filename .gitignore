@@ -41,6 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 # ignore documents folder of account documents to be downloaded locally
+# documents folder is now in backend so no need but leaving it
 /documents/*
 
 # ignore q/a log file
@@ -48,4 +49,3 @@ log.txt
 
 # ignore email to db collection map and user specific file names
 /scripts/userEmailsCollections.ts
-/scripts/filePathsPerUserCollectionName.ts

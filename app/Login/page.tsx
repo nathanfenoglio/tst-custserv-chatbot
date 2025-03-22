@@ -12,7 +12,7 @@ const Login = () => {
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault(); // prevent default browser page refresh etc
     setError("");
     try {
       await login(email, password);
@@ -32,6 +32,7 @@ const Login = () => {
       <h1 className="text-[#00FFFF] text-3xl mb-4">TST Chatbot Login</h1>
       {error && <p className="text-red-500">{error}</p>}
       <form onSubmit={handleSubmit} className="flex flex-col">
+        {/* email */}
         <input
           className="p-3 mb-4 rounded-lg bg-gray-800 text-white"
           type="email"
@@ -39,6 +40,7 @@ const Login = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+        {/* password */}
         <input
           className="p-3 mb-4 rounded-lg bg-gray-800 text-white"
           type="password"
@@ -46,6 +48,7 @@ const Login = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        {/* login button */}
         <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">
           Login
         </button>

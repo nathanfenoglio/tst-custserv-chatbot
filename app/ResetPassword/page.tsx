@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthContext";
 // they will receive an email with a link to reset their password
 // will need to be able to access email to click link and change password
 const ResetPassword = () => {
-  const { resetPassword } = useAuth();
+  const { resetPassword } = useAuth(); // resetPassword function defined in context/AuthContext which uses firebase sendPasswordResetEmail function
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
@@ -31,6 +31,7 @@ const ResetPassword = () => {
       <h1 className="text-[#00FFFF] text-3xl mb-4">Reset Password</h1>
       {message && <p className="text-green-500">{message}</p>}
       <form onSubmit={handleSubmit} className="flex flex-col">
+        {/* email for user to verify user to have reset password email sent to */}
         <input
           className="p-3 mb-4 rounded-lg bg-gray-800 text-white"
           type="email"
@@ -38,11 +39,13 @@ const ResetPassword = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+        {/* send reset link button */}
         <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">
           Send Reset Link
         </button>
       </form>
       
+      {/* button to go back to login page */}
       <button className="bg-green-500 text-white px-4 py-2 rounded-lg mt-4" onClick={handleBack}>
         Login
       </button>
