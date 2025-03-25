@@ -74,7 +74,8 @@ entirely locally but able to be accessed by users with login credentials remotel
 - in backend repo there is google_apps_scripts folder > Code.gs
 - copy code from Code.gs and paste into the google apps script that you just created
     - need to get url from backend to insert in the below code block
-    - SCREENSHOT OF CODE Code.gs...1
+    - ![alt_image](https://github.com/nathanfenoglio/tst-custserv-chatbot/blob/main/readme_images/1.png)
+    - 
 - schedule google apps script to be run at whatever interval
     - click on triggers
     - add trigger
@@ -100,7 +101,7 @@ entirely locally but able to be accessed by users with login credentials remotel
 #### gitignored files that you will need to set up (frontend)
 - frontend:
     - scripts/userEmailsCollections.ts 
-        - SCREENSHOT OF CODE...2
+        - ![alt_image](https://github.com/nathanfenoglio/tst-custserv-chatbot/blob/main/readme_images/2.png)
     - .env
         - astra db credentials
         - ASTRA_DB_NAMESPACE="default_keyspace"
@@ -121,9 +122,9 @@ entirely locally but able to be accessed by users with login credentials remotel
 #### gitignored files that you will need to set up (backend):
 - backend:
     - scripts/localFoldersPerUserCollectionName.ts
-        - SCREENSHOT OF CODE...3
+        - ![alt_image](https://github.com/nathanfenoglio/tst-custserv-chatbot/blob/main/readme_images/3.png)
     - scripts/userEmailsCollections.ts
-        - SCREENSHOT OF CODE...4
+        - ![alt_image](https://github.com/nathanfenoglio/tst-custserv-chatbot/blob/main/readme_images/4.png)
     - .env
         - astra db credentials
         - ASTRA_DB_NAMESPACE="default_keyspace"
@@ -133,10 +134,10 @@ entirely locally but able to be accessed by users with login credentials remotel
     - client_secret.json
         - should have copied file and put in top level of backend going through google drive setup
     - driveFolderIdToLocalFolder.js
-        - SCREENSHOT OF CODE...5
+        - ![alt_image](https://github.com/nathanfenoglio/tst-custserv-chatbot/blob/main/readme_images/5.png)
     - folderIdsCollections.js
         - SCREENSHOT OF CODE...6
-    
+        - ![alt_image](https://github.com/nathanfenoglio/tst-custserv-chatbot/blob/main/readme_images/6.png)    
 #### frontend
 - npm run dev
 - ngrok http 3000 
@@ -145,5 +146,6 @@ entirely locally but able to be accessed by users with login credentials remotel
 #### backend
 - node server.js (should see Listening on port 3001)
 - ngrok http 3001 (will need to provide url to use in google apps script)
-    - SCREENSHOT OF CODE Code.gs...1
+    - ![alt_image](https://github.com/nathanfenoglio/tst-custserv-chatbot/blob/main/readme_images/1.png)
+
 
