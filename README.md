@@ -3,6 +3,19 @@
 
 Locally run LLM chatbot for company employees to be able to query their personal and company documents privately without their data being sent to an AI provider. The LLM is run entirely locally but able to be accessed by users with login credentials remotely through web browser. Users can control what documents their chatbot has access to through updating the contents of their assigned Google Drive folder. Good for employee training and quick look up for employees needing to query their various documents for information throughout their workday.
 
+# Technologies Used
+- Next.js
+- Tailwind CSS
+- Datastax Astra DB
+- Ollama
+  - llama 3.2:3B running on computer serving frontend 
+  - nomic-embed-text running on computer serving backend for generating embeddings from documents
+- Google Apps Script
+- Google Drive 
+- Firebase Authentication
+- ngrok for generating backend and frontend urls
+- Express.js in backend to listen for webhook to be sent from google apps script
+
 # Setup Instructions
 - if wanting to run on 2 separate computers clone backend repo on one computer and frontend repo on another
 #### clone backend  
