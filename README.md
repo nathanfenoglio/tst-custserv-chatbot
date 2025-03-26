@@ -19,21 +19,21 @@ Locally run LLM chatbot for company employees to be able to query their personal
 # Project Overview
 #### Google apps script
 - running in google cloud and listening for any changes to the users folders
-- if change to a folder is detected (file modified, deleted, or added) a post request is sent to the backend web url with the folder id of the folder that a change was detected in to trigger the backend server.js script to run and redownload files from google drive and reseed user's astradb collection
+- if change to a folder is detected (file modified, deleted, or added) a post request is sent to the backend web url with the folder id of the folder that a change was detected in to trigger the backend server.js script to run and redownload files from google drive and reseed user's Astra DB collection
 
 #### backend
 - server.js listening for webhook that google apps script will send to backend ngrok generated url
 - when server.js receives payload from google apps script, it will contain the user's folder id where there was a change detected in google drive
 - server.js will then call npm run download -- ${folderId} to run scripts/download.js script that will redownload all of the documents from the user's folderId from google drive to the user's assigned local document directory
-- after the new documents have been downloaded, server.js calls npm run seed -- ${collectionName} that runs loadDb.ts script and will drop the user's astradb collection and then reseed it from the recent documents in their respective local folder 
-  - uses nomic-embed-text running at http://127.0.0.1:11434/api/embeddings for the embeddings to send to astradb
+- after the new documents have been downloaded, server.js calls npm run seed -- ${collectionName} that runs loadDb.ts script and will drop the user's Astra DB collection and then reseed it from the recent documents in their respective local folder 
+  - uses nomic-embed-text running at http://127.0.0.1:11434/api/embeddings for the embeddings to send to Astra DB
 
 #### frontend
 - layout.tsx has all children components wrapped in auth context provider that ensures that all child components will be affected by auth state and have access to firebase auth functions login, logout, resetPassword
   - resetPassword uses firebase/auth sendPasswordResetEmail with user's email as a parameter to send email to user to allow them to reset their password 
 
 - page.tsx is the entry point of the app and specifies to return the HomePage component
-- Home/page.tsx contains the main interface for the user to ask questions and receive responses for their specific documents of their astradb collection
+- Home/page.tsx contains the main interface for the user to ask questions and receive responses for their specific documents of their Astra DB collection
   - redirects to Login page if user is null
   - sends user question to api/chat route route.ts
   - receives response back and displays messages
@@ -46,10 +46,10 @@ Locally run LLM chatbot for company employees to be able to query their personal
 
 - route.ts
   - logs user questions and chatbot responses to log.txt file
-  - creates connection with astradb with credentials from .env
+  - creates connection with Astra DB with credentials from .env
   - when POST request is received from Home/page.tsx user query
     - question is embedded and stored in a vector that is passed to user's collection to find 10 most similar documents to user's question
-    - the document context received from astradb is then sent with the user's question to llama3.2:3b which ollama is running locally at http://localhost:11434/api/generate receives response from model and returns response to Home/page.tsx
+    - the document context received from Astra DB is then sent with the user's question to llama3.2:3b which ollama is running locally at http://localhost:11434/api/generate receives response from model and returns response to Home/page.tsx
 
 # Setup Instructions
 - if wanting to run on 2 separate computers clone backend repo on one computer and frontend repo on another
