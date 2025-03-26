@@ -182,7 +182,6 @@ Locally run LLM chatbot for company employees to be able to query their personal
     - driveFolderIdToLocalFolder.js
         - ![alt_image](https://github.com/nathanfenoglio/tst-custserv-chatbot/blob/main/readme_images/5.png)
     - folderIdsCollections.js
-        - SCREENSHOT OF CODE...6
         - ![alt_image](https://github.com/nathanfenoglio/tst-custserv-chatbot/blob/main/readme_images/6.png)    
 #### frontend
 - npm run dev
